@@ -2,6 +2,8 @@ package com.cvprofile.service;
 
 import com.cvprofile.entity.Project;
 import com.cvprofile.entity.Profile;
+import com.cvprofile.exception.ApiException;
+import com.cvprofile.exception.ErrorCode;
 import com.cvprofile.repository.ProjectRepository;
 import com.cvprofile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class ProjectService {
     @Transactional
     public Project createProject(Long profileId, Project project) {
         Profile profile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new RuntimeException("Profile not found with id: " + profileId));
+                .orElseThrow(() -> new ApiException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found with id: " + profileId));
         
         project.setProfile(profile);
         return projectRepository.save(project);
@@ -33,7 +35,7 @@ public class ProjectService {
     @Transactional
     public Project updateProject(Long id, Project projectDetails) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Project not found with id: " + id));
+                .orElseThrow(() -> new ApiException(ErrorCode.PROJECT_NOT_FOUND, "Project not found with id: " + id));
         
         project.setTitle(projectDetails.getTitle());
         project.setDescription(projectDetails.getDescription());
@@ -46,13 +48,13 @@ public class ProjectService {
         project.setAchievements(projectDetails.getAchievements());
         
         return projectRepository.save(project);
-    }
-    
     @Transactional
     public void deleteProject(Long id) {
         if (!projectRepository.existsById(id)) {
-            throw new RuntimeException("Project not found with id: " + id);
+            throw new ApiException(ErrorCode.PROJECT_NOT_FOUND, "Project not found with id: " + id);
         }
         projectRepository.deleteById(id);
+    }
+}       projectRepository.deleteById(id);
     }
 }

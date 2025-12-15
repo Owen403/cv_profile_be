@@ -2,6 +2,8 @@ package com.cvprofile.service;
 
 import com.cvprofile.entity.Skill;
 import com.cvprofile.entity.Profile;
+import com.cvprofile.exception.ApiException;
+import com.cvprofile.exception.ErrorCode;
 import com.cvprofile.repository.SkillRepository;
 import com.cvprofile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,7 @@ public class SkillService {
     @Transactional
     public Skill createSkill(Long profileId, Skill skill) {
         Profile profile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new RuntimeException("Profile not found with id: " + profileId));
+                .orElseThrow(() -> new ApiException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found with id: " + profileId));
         
         skill.setProfile(profile);
         return skillRepository.save(skill);
@@ -38,7 +40,7 @@ public class SkillService {
     @Transactional
     public Skill updateSkill(Long id, Skill skillDetails) {
         Skill skill = skillRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Skill not found with id: " + id));
+                .orElseThrow(() -> new ApiException(ErrorCode.SKILL_NOT_FOUND, "Skill not found with id: " + id));
         
         skill.setName(skillDetails.getName());
         skill.setCategory(skillDetails.getCategory());
@@ -51,7 +53,7 @@ public class SkillService {
     @Transactional
     public void deleteSkill(Long id) {
         if (!skillRepository.existsById(id)) {
-            throw new RuntimeException("Skill not found with id: " + id);
+            throw new ApiException(ErrorCode.SKILL_NOT_FOUND, "Skill not found with id: " + id);
         }
         skillRepository.deleteById(id);
     }

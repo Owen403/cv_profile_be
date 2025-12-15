@@ -2,6 +2,8 @@ package com.cvprofile.service;
 
 import com.cvprofile.entity.Event;
 import com.cvprofile.entity.Profile;
+import com.cvprofile.exception.ApiException;
+import com.cvprofile.exception.ErrorCode;
 import com.cvprofile.repository.EventRepository;
 import com.cvprofile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class EventService {
     @Transactional
     public Event createEvent(Long profileId, Event event) {
         Profile profile = profileRepository.findById(profileId)
-                .orElseThrow(() -> new RuntimeException("Profile not found with id: " + profileId));
+                .orElseThrow(() -> new ApiException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found with id: " + profileId));
         
         event.setProfile(profile);
         return eventRepository.save(event);
@@ -33,7 +35,7 @@ public class EventService {
     @Transactional
     public Event updateEvent(Long id, Event eventDetails) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
+                .orElseThrow(() -> new ApiException(ErrorCode.EVENT_NOT_FOUND, "Event not found with id: " + id));
         
         event.setTitle(eventDetails.getTitle());
         event.setDescription(eventDetails.getDescription());
@@ -51,7 +53,7 @@ public class EventService {
     @Transactional
     public void deleteEvent(Long id) {
         if (!eventRepository.existsById(id)) {
-            throw new RuntimeException("Event not found with id: " + id);
+            throw new ApiException(ErrorCode.EVENT_NOT_FOUND, "Event not found with id: " + id);
         }
         eventRepository.deleteById(id);
     }

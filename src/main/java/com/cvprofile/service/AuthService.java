@@ -28,12 +28,12 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
         // Check if username exists
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username is already taken!");
+            throw new ApiException(ErrorCode.USERNAME_EXISTS, "Username is already taken!");
         }
         
         // Check if email exists
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email is already in use!");
+            throw new ApiException(ErrorCode.EMAIL_EXISTS, "Email is already in use!");
         }
         
         // Create new user
@@ -75,7 +75,7 @@ public class AuthService {
         User user = userRepository.findByUsernameOrEmail(
                 request.getUsernameOrEmail(), 
                 request.getUsernameOrEmail()
-        ).orElseThrow(() -> new RuntimeException("User not found"));
+        ).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND, "User not found"));
         
         return new AuthResponse(
                 token,
@@ -91,6 +91,6 @@ public class AuthService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND, "User not found"));
     }
 }

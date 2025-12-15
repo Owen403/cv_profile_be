@@ -1,6 +1,8 @@
 package com.cvprofile.service;
 
 import com.cvprofile.entity.Profile;
+import com.cvprofile.exception.ApiException;
+import com.cvprofile.exception.ErrorCode;
 import com.cvprofile.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,7 @@ public class ProfileService {
     @Transactional
     public Profile createProfile(Profile profile) {
         if (profileRepository.existsByEmail(profile.getEmail())) {
-            throw new RuntimeException("Email already exists: " + profile.getEmail());
+            throw new ApiException(ErrorCode.EMAIL_EXISTS, "Email already exists: " + profile.getEmail());
         }
         return profileRepository.save(profile);
     }
@@ -40,7 +42,7 @@ public class ProfileService {
     @Transactional
     public Profile updateProfile(Long id, Profile profileDetails) {
         Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found with id: " + id));
+                .orElseThrow(() -> new ApiException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found with id: " + id));
         
         profile.setFullName(profileDetails.getFullName());
         profile.setEmail(profileDetails.getEmail());
@@ -59,7 +61,7 @@ public class ProfileService {
     @Transactional
     public void deleteProfile(Long id) {
         if (!profileRepository.existsById(id)) {
-            throw new RuntimeException("Profile not found with id: " + id);
+            throw new ApiException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found with id: " + id);
         }
         profileRepository.deleteById(id);
     }

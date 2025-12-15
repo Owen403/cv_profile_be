@@ -1,6 +1,8 @@
 package com.cvprofile.service;
 
 import com.cvprofile.entity.ChatMessage;
+import com.cvprofile.exception.ApiException;
+import com.cvprofile.exception.ErrorCode;
 import com.cvprofile.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +35,7 @@ public class ChatService {
     @Transactional
     public void markAsRead(Long messageId) {
         ChatMessage message = chatMessageRepository.findById(messageId)
-                .orElseThrow(() -> new RuntimeException("Message not found with id: " + messageId));
+                .orElseThrow(() -> new ApiException(ErrorCode.CHAT_MESSAGE_NOT_FOUND, "Message not found with id: " + messageId));
         message.setIsRead(true);
         chatMessageRepository.save(message);
     }
