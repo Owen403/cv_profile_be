@@ -1,0 +1,6 @@
+-- Increase field lengths for User entity
+ALTER TABLE users ALTER COLUMN avatar TYPE TEXT;
+ALTER TABLE users ALTER COLUMN linkedin TYPE VARCHAR(500);
+ALTER TABLE users ALTER COLUMN github TYPE VARCHAR(500);
+ALTER TABLE users ALTER COLUMN website TYPE VARCHAR(500);
+ALTER TABLE users ALTER COLUMN organization TYPE VARCHAR(500);
